@@ -29,6 +29,19 @@ const metrics = [
   },
 ];
 
+const socialMetrics = [
+  { name: "Partner Posts", value: 450 },
+  { name: "AWS Volunteer Posts", value: 320 },
+  { name: "Beneficiary Posts", value: 280 },
+  { name: "LinkedIn Posts", value: 180 },
+  { name: "Print Ads", value: 45 },
+  { name: "Local Media", value: 65 },
+  { name: "Paid Articles", value: 28 },
+  { name: "Earned Articles", value: 92 },
+  { name: "Partner Surveys", value: 150 },
+  { name: "Stakeholder Surveys", value: 85 },
+];
+
 const chartData = [
   { name: "STEAM", value: 4000 },
   { name: "Skills", value: 3000 },
@@ -70,6 +83,20 @@ export const DashboardMetrics = () => {
               <YAxis />
               <Tooltip />
               <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <Card className="glass-card p-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Sentiment & Social Impact Metrics</h3>
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={socialMetrics} layout="vertical">
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" width={150} />
+              <Tooltip />
+              <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
