@@ -2,29 +2,71 @@ import { Card } from "@/components/ui/card";
 import { DashboardMetrics } from "@/components/DashboardMetrics";
 import { ProgramOverview } from "@/components/ProgramOverview";
 import { motion } from "framer-motion";
+import { RegionsSidebar, SelectedRegions } from "@/components/RegionsSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { useState } from "react";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto space-y-8"
-      >
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
-            Program Impact Dashboard
-          </h1>
-          <p className="text-gray-600">
-            Tracking our community initiatives and their impact
-          </p>
-        </header>
+  const [selectedRegions, setSelectedRegions] = useState<SelectedRegions>({
+    AMER: {
+      existing: true,
+      ml: true,
+      expansion: true,
+      prospective: true,
+    },
+    EMEA: {
+      existing: true,
+      ml: true,
+      expansion: true,
+      prospective: true,
+    },
+    APJC: {
+      existing: true,
+      ml: true,
+      expansion: true,
+      prospective: true,
+    },
+  });
 
-        <DashboardMetrics />
-        <ProgramOverview />
-      </motion.div>
-    </div>
+  const handleRegionToggle = (region: string, type: string, value: boolean) => {
+    setSelectedRegions((prev) => ({
+      ...prev,
+      [region]: {
+        ...prev[region],
+        [type]: value,
+      },
+    }));
+  };
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <RegionsSidebar
+          selectedRegions={selectedRegions}
+          onRegionToggle={handleRegionToggle}
+        />
+        <div className="flex-1 bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto space-y-8"
+          >
+            <header className="text-center mb-12">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
+                Program Impact Dashboard
+              </h1>
+              <p className="text-gray-600">
+                Tracking our community initiatives and their impact
+              </p>
+            </header>
+
+            <DashboardMetrics />
+            <ProgramOverview />
+          </motion.div>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
