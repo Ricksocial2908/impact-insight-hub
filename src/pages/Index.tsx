@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { DashboardMetrics } from "@/components/DashboardMetrics";
 import { ProgramOverview } from "@/components/ProgramOverview";
+import { RegionsFilter } from "@/components/RegionsFilter";
 import { motion } from "framer-motion";
 
 const Index = () => {
@@ -13,13 +14,16 @@ const Index = () => {
           transition={{ duration: 0.5 }}
           className="max-w-7xl mx-auto space-y-8"
         >
-          <header className="text-center mb-12">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
-              Program Impact Dashboard
-            </h1>
-            <p className="text-gray-600">
-              Tracking our community initiatives and their impact
-            </p>
+          <header className="flex flex-col md:flex-row justify-between items-center mb-12">
+            <div className="text-center md:text-left mb-4 md:mb-0">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
+                Program Impact Dashboard
+              </h1>
+              <p className="text-gray-600">
+                Tracking our community initiatives and their impact
+              </p>
+            </div>
+            <RegionsFilter />
           </header>
 
           <DashboardMetrics />
