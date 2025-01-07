@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { Globe, MapPin } from "lucide-react";
+import { Globe, MapPin, Check } from "lucide-react";
 
 type Region = {
   name: string;
@@ -106,6 +106,11 @@ export const RegionsSidebar = ({
   selectedRegions,
   onRegionToggle,
 }: RegionsSidebarProps) => {
+  const getSelectedCount = (regionName: string, type: string) => {
+    const regions = selectedRegions[regionName]?.[type];
+    return regions ? 1 : 0;
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -127,17 +132,24 @@ export const RegionsSidebar = ({
                           !selectedRegions[regionName]?.[type]
                         )
                       }
-                      className={
+                      className={`flex items-center justify-between w-full ${
                         selectedRegions[regionName]?.[type]
                           ? "bg-primary text-primary-foreground"
                           : ""
-                      }
+                      }`}
                     >
-                      <MapPin className="mr-2" />
-                      <span className="capitalize">{type}</span>
-                      <span className="ml-auto text-xs">
-                        ({locations.length})
-                      </span>
+                      <div className="flex items-center">
+                        <MapPin className="mr-2" />
+                        <span className="capitalize">{type}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {selectedRegions[regionName]?.[type] && (
+                          <Check className="w-4 h-4" />
+                        )}
+                        <span className="text-xs">
+                          ({locations.length})
+                        </span>
+                      </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
