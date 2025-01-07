@@ -25,10 +25,12 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePerio
   const regionGroups = new Map<string, string[]>();
   selectedRegions.forEach(code => {
     const group = getRegionGroup(code);
-    if (!regionGroups.has(group)) {
-      regionGroups.set(group, []);
+    if (group !== 'Unknown') { // Only process known regions
+      if (!regionGroups.has(group)) {
+        regionGroups.set(group, []);
+      }
+      regionGroups.get(group)?.push(code);
     }
-    regionGroups.get(group)?.push(code);
   });
 
   // Base metrics for each region (yearly totals)
@@ -100,6 +102,11 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePerio
       },
     },
   };
+
+  // If no valid regions are selected, return empty array
+  if (regionGroups.size === 0) {
+    return [];
+  }
 
   return Array.from(regionGroups.entries()).map(([region, codes]) => {
     const base = baseMetrics[region as keyof typeof baseMetrics];
