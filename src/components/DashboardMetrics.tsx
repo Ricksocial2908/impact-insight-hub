@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { BarChart as BarChartIcon, Users, Clock, FolderGit2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BarChart as BarChartIcon, Users, Clock, FolderGit2, ChevronDown, ChevronUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { calculateRegionalMetrics } from "../utils/regionData";
 import { adjustValueForTimePeriod, getTimeMultiplier } from "../utils/timeAdjustments";
@@ -21,6 +21,7 @@ type TimePeriod = 'month' | 'quarter' | 'year';
 
 export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('year');
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const regionalData = calculateRegionalMetrics(selectedRegions, timePeriod);
   const timeMultiplier = getTimeMultiplier(timePeriod);
 
@@ -65,6 +66,11 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
       change: "+15%",
       positive: true,
       icon: <BarChartIcon className="w-4 h-4 text-primary" />,
+      details: [
+        { label: "Direct Investment", value: `$${((aggregatedMetrics.totalInvestment * 0.7) / 1000000).toFixed(1)}M` },
+        { label: "Indirect Investment", value: `$${((aggregatedMetrics.totalInvestment * 0.3) / 1000000).toFixed(1)}M` },
+        { label: "ROI", value: "1.5x" },
+      ],
     },
     {
       title: "Total Beneficiaries",
@@ -72,6 +78,11 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
       change: "+12%",
       positive: true,
       icon: <Users className="w-4 h-4 text-primary" />,
+      details: [
+        { label: "Direct Beneficiaries", value: Math.round(aggregatedMetrics.beneficiaries * 0.6).toLocaleString() },
+        { label: "Indirect Beneficiaries", value: Math.round(aggregatedMetrics.beneficiaries * 0.4).toLocaleString() },
+        { label: "Satisfaction Rate", value: "92%" },
+      ],
     },
     {
       title: "Volunteer Hours",
@@ -79,6 +90,11 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
       change: "+8%",
       positive: true,
       icon: <Clock className="w-4 h-4 text-primary" />,
+      details: [
+        { label: "Individual Hours", value: Math.round(aggregatedMetrics.volunteerHours * 0.8).toLocaleString() },
+        { label: "Group Hours", value: Math.round(aggregatedMetrics.volunteerHours * 0.2).toLocaleString() },
+        { label: "Volunteer Satisfaction", value: "95%" },
+      ],
     },
     {
       title: "Projects",
@@ -86,8 +102,17 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
       change: "+5%",
       positive: true,
       icon: <FolderGit2 className="w-4 h-4 text-primary" />,
+      details: [
+        { label: "Active Projects", value: Math.round(aggregatedMetrics.projects * 0.7).toString() },
+        { label: "Completed Projects", value: Math.round(aggregatedMetrics.projects * 0.3).toString() },
+        { label: "Success Rate", value: "89%" },
+      ],
     },
   ];
+
+  const toggleCard = (index: number) => {
+    setExpandedCard(expandedCard === index ? null : index);
+  };
 
   return (
     <div className="space-y-6">
@@ -114,11 +139,24 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="relative"
           >
-            <Card className="glass-card p-6 card-hover">
-              <div className="flex items-center gap-3 mb-2">
-                {metric.icon}
-                <h3 className="text-sm font-medium text-gray-500">{metric.title}</h3>
+            <Card 
+              className={`glass-card p-6 card-hover cursor-pointer transition-all duration-300 ${
+                expandedCard === index ? 'shadow-lg' : ''
+              }`}
+              onClick={() => toggleCard(index)}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  {metric.icon}
+                  <h3 className="text-sm font-medium text-gray-500">{metric.title}</h3>
+                </div>
+                {expandedCard === index ? (
+                  <ChevronUp className="w-4 h-4 text-gray-500" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                )}
               </div>
               <div className="mt-2 flex items-baseline">
                 <p className="text-2xl font-semibold text-gray-900">{metric.value}</p>
@@ -126,6 +164,24 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
                   {metric.change}
                 </span>
               </div>
+              <AnimatePresence>
+                {expandedCard === index && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-4 pt-4 border-t"
+                  >
+                    {metric.details.map((detail, detailIndex) => (
+                      <div key={detail.label} className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-500">{detail.label}</span>
+                        <span className="text-sm font-medium text-gray-900">{detail.value}</span>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </Card>
           </motion.div>
         ))}
