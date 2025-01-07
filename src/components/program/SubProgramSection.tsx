@@ -18,6 +18,7 @@ export const SubProgramSection = ({ subProgram, timePeriod }: SubProgramSectionP
             value={metric.value}
             goal={metric.goal}
             details={metric.details}
+            timePeriod={timePeriod}
           />
         ))}
       </div>

@@ -1,6 +1,8 @@
 type TimePeriod = 'month' | 'quarter' | 'year';
 
 export const adjustValueForTimePeriod = (value: string, timePeriod: TimePeriod): string => {
+  if (!value) return '0';
+  
   // Handle monetary values (with $ and M/K suffixes)
   if (value.includes('$')) {
     const numericPart = value.replace(/[$,]/g, '');
@@ -21,17 +23,19 @@ export const adjustValueForTimePeriod = (value: string, timePeriod: TimePeriod):
       baseValue / 4 : baseValue;
 
     // Format back to original style (M/K)
-    if (value.includes('M')) {
+    if (adjustedValue >= 1000000) {
       return `$${(adjustedValue / 1000000).toFixed(1)}M`;
     }
-    if (value.includes('K')) {
+    if (adjustedValue >= 1000) {
       return `$${(adjustedValue / 1000).toFixed(1)}K`;
     }
-    return `$${adjustedValue.toLocaleString()}`;
+    return `$${Math.round(adjustedValue).toLocaleString()}`;
   }
 
   // Handle numeric values with commas
-  const numValue = parseInt(value.replace(/,/g, ''));
+  const numValue = parseInt(value.replace(/[^0-9.-]+/g, ''));
+  if (isNaN(numValue)) return '0';
+  
   const adjustedValue = timePeriod === 'month' ? 
     Math.round(numValue / 12) : timePeriod === 'quarter' ? 
     Math.round(numValue / 4) : numValue;

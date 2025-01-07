@@ -11,18 +11,25 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { adjustValueForTimePeriod } from "@/utils/timeAdjustments";
 
 interface MetricItemProps {
   label: string;
   value: string;
   goal: string;
   details?: string[];
+  timePeriod: 'month' | 'quarter' | 'year';
 }
 
-export const MetricItem = ({ label, value, goal, details }: MetricItemProps) => {
+export const MetricItem = ({ label, value, goal, details, timePeriod }: MetricItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const numericValue = value ? Number(value.replace(/[^0-9.-]+/g, "")) : 0;
-  const numericGoal = goal ? Number(goal.replace(/[^0-9.-]+/g, "")) : 1;
+  
+  // Adjust both value and goal based on time period
+  const adjustedValue = adjustValueForTimePeriod(value, timePeriod);
+  const adjustedGoal = adjustValueForTimePeriod(goal, timePeriod);
+  
+  const numericValue = adjustedValue ? Number(adjustedValue.replace(/[^0-9.-]+/g, "")) : 0;
+  const numericGoal = adjustedGoal ? Number(adjustedGoal.replace(/[^0-9.-]+/g, "")) : 1;
   const progress = (numericValue / numericGoal) * 100;
 
   return (
@@ -39,12 +46,12 @@ export const MetricItem = ({ label, value, goal, details }: MetricItemProps) => 
               <Tooltip>
                 <TooltipTrigger>
                   <span className="text-sm text-gray-600">
-                    {value} / {goal}
+                    {adjustedValue} / {adjustedGoal}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Current value: {value}</p>
-                  <p>Goal: {goal}</p>
+                  <p>Current value: {adjustedValue}</p>
+                  <p>Goal: {adjustedGoal}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
