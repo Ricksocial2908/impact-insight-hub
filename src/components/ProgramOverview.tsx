@@ -1,11 +1,19 @@
-import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { ProgramCard } from "./program/ProgramCard";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Program } from "@/types/programs";
 
 interface ProgramOverviewProps {
   selectedRegions?: Set<string>;
 }
 
-const programs = [
+const programs: Program[] = [
   {
     name: "STEAM",
     ytdInvestment: "$2.5M",
@@ -185,45 +193,34 @@ const programs = [
 ];
 
 export const ProgramOverview = ({ selectedRegions }: ProgramOverviewProps) => {
+  const [timePeriod, setTimePeriod] = useState<'month' | 'quarter' | 'year'>('year');
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-900">Program Overview</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-semibold text-gray-900">Program Overview</h2>
+        <Select
+          value={timePeriod}
+          onValueChange={(value: 'month' | 'quarter' | 'year') => setTimePeriod(value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select time period" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="month">This Month</SelectItem>
+            <SelectItem value="quarter">This Quarter</SelectItem>
+            <SelectItem value="year">This Year</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {programs.map((program, index) => (
-          <motion.div
+          <ProgramCard
             key={program.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <Card className="glass-card p-6 card-hover">
-              <div className="space-y-4">
-                <div className="border-b pb-2">
-                  <h3 className="text-lg font-medium text-gray-900">{program.name}</h3>
-                  <p className="text-sm text-gray-500">YTD Investment: {program.ytdInvestment}</p>
-                </div>
-                <div className="space-y-4">
-                  {program.subPrograms.map((subProgram) => (
-                    <div key={subProgram.name} className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700">{subProgram.name}</h4>
-                      <div className="space-y-1">
-                        {subProgram.metrics.map((metric) => (
-                          <div key={metric.label} className="flex justify-between items-center text-sm">
-                            <span className="text-gray-500">{metric.label}</span>
-                            <div className="flex gap-2">
-                              <span className="text-gray-900">{metric.value}</span>
-                              <span className="text-gray-400">|</span>
-                              <span className="text-gray-500">Goal: {metric.goal}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Card>
-          </motion.div>
+            program={program}
+            index={index}
+            timePeriod={timePeriod}
+          />
         ))}
       </div>
     </div>
