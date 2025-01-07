@@ -57,11 +57,12 @@ export const ProgramCard = ({ program, index, timePeriod }: ProgramCardProps) =>
           </div>
           <div className="space-y-6">
             {program.subPrograms.map((subProgram) => (
-              <SubProgramSection
-                key={subProgram.name}
-                subProgram={subProgram}
-                timePeriod={timePeriod}
-              />
+              <Card key={subProgram.name} className="glass-card bg-white/40 p-4 transition-all duration-300 hover:bg-white/60">
+                <SubProgramSection
+                  subProgram={subProgram}
+                  timePeriod={timePeriod}
+                />
+              </Card>
             ))}
           </div>
         </div>
