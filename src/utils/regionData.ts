@@ -3,8 +3,11 @@ import { getTimeMultiplier } from './timeAdjustments';
 
 type TimePeriod = 'month' | 'quarter' | 'year';
 
+const TOTAL_REGIONS = 32; // Total number of possible regions
+
 export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePeriod: TimePeriod = 'year') => {
   const timeMultiplier = getTimeMultiplier(timePeriod);
+  const regionMultiplier = selectedRegions.size / TOTAL_REGIONS;
   
   // Helper function to get the main region from a region code
   const getMainRegion = (code: string): string => {
@@ -25,7 +28,7 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePerio
     regionCounts[mainRegion as keyof typeof regionCounts]++;
   });
 
-  // Base metrics for each region
+  // Base metrics for each region (yearly totals)
   const baseMetrics = {
     AMER: {
       totalInvestment: 5200000,
@@ -49,57 +52,57 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePerio
         "Partner Engagement": 80,
       },
     },
-  EMEA: {
-    totalInvestment: 3100000,
-    beneficiaries: 45000,
-    volunteerHours: 15000,
-    projects: 80,
-    programDistribution: {
-      STEAM: 700000,
-      Skills: 500000,
-      Sustainability: 1200000,
-      Hyperlocal: 700000,
+    EMEA: {
+      totalInvestment: 3100000,
+      beneficiaries: 45000,
+      volunteerHours: 15000,
+      projects: 80,
+      programDistribution: {
+        STEAM: 700000,
+        Skills: 500000,
+        Sustainability: 1200000,
+        Hyperlocal: 700000,
+      },
+      impactMetrics: {
+        "Students Reached": 3000,
+        "Employment Created": 280,
+        "Trees Planted": 3000,
+        "Water Saved (Gal)": 600000,
+        "Communities Impacted": 80,
+        "Volunteer Events": 290,
+        "Media Coverage": 60,
+        "Partner Engagement": 45,
+      },
     },
-    impactMetrics: {
-      "Students Reached": 3000,
-      "Employment Created": 280,
-      "Trees Planted": 3000,
-      "Water Saved (Gal)": 600000,
-      "Communities Impacted": 80,
-      "Volunteer Events": 290,
-      "Media Coverage": 60,
-      "Partner Engagement": 45,
+    APJC: {
+      totalInvestment: 1800000,
+      beneficiaries: 33789,
+      volunteerHours: 7678,
+      projects: 34,
+      programDistribution: {
+        STEAM: 300000,
+        Skills: 300000,
+        Sustainability: 200000,
+        Hyperlocal: 100000,
+      },
+      impactMetrics: {
+        "Students Reached": 1345,
+        "Employment Created": 143,
+        "Trees Planted": 1345,
+        "Water Saved (Gal)": 200000,
+        "Communities Impacted": 34,
+        "Volunteer Events": 150,
+        "Media Coverage": 30,
+        "Partner Engagement": 31,
+      },
     },
-  },
-  APJC: {
-    totalInvestment: 1800000,
-    beneficiaries: 33789,
-    volunteerHours: 7678,
-    projects: 34,
-    programDistribution: {
-      STEAM: 300000,
-      Skills: 300000,
-      Sustainability: 200000,
-      Hyperlocal: 100000,
-    },
-    impactMetrics: {
-      "Students Reached": 1345,
-      "Employment Created": 143,
-      "Trees Planted": 1345,
-      "Water Saved (Gal)": 200000,
-      "Communities Impacted": 34,
-      "Volunteer Events": 150,
-      "Media Coverage": 30,
-      "Partner Engagement": 31,
-    },
-  },
   };
 
   return Object.entries(regionCounts)
     .filter(([_, count]) => count > 0)
     .map(([region, count]) => {
       const base = baseMetrics[region as keyof typeof baseMetrics];
-      const ratio = count / 10; // Assuming average 10 regions per main region
+      const ratio = (count / TOTAL_REGIONS) * timeMultiplier;
 
       return {
         region,

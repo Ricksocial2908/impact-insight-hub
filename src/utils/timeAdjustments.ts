@@ -18,9 +18,7 @@ export const adjustValueForTimePeriod = (value: string, timePeriod: TimePeriod):
     }
 
     // Adjust based on time period
-    const adjustedValue = timePeriod === 'month' ? 
-      baseValue / 12 : timePeriod === 'quarter' ? 
-      baseValue / 4 : baseValue;
+    const adjustedValue = baseValue * getTimeMultiplier(timePeriod);
 
     // Format back to original style (M/K)
     if (adjustedValue >= 1000000) {
@@ -36,10 +34,7 @@ export const adjustValueForTimePeriod = (value: string, timePeriod: TimePeriod):
   const numValue = parseInt(value.replace(/[^0-9.-]+/g, ''));
   if (isNaN(numValue)) return '0';
   
-  const adjustedValue = timePeriod === 'month' ? 
-    Math.round(numValue / 12) : timePeriod === 'quarter' ? 
-    Math.round(numValue / 4) : numValue;
-
+  const adjustedValue = Math.round(numValue * getTimeMultiplier(timePeriod));
   return adjustedValue.toLocaleString();
 };
 
