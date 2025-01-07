@@ -13,9 +13,11 @@ export const SubProgramSection = ({ subProgram, timePeriod }: SubProgramSectionP
       <div className="space-y-3">
         {subProgram.metrics.map((metric) => (
           <MetricItem 
-            key={metric.label} 
-            metric={metric} 
-            timePeriod={timePeriod}
+            key={metric.label}
+            label={metric.label}
+            value={metric.value}
+            goal={metric.goal}
+            details={metric.details}
           />
         ))}
       </div>

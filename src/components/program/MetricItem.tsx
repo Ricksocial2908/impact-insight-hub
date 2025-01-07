@@ -21,7 +21,9 @@ interface MetricItemProps {
 
 export const MetricItem = ({ label, value, goal, details }: MetricItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const progress = (Number(value.replace(/,/g, "")) / Number(goal.replace(/,/g, ""))) * 100;
+  const numericValue = value ? Number(value.replace(/[^0-9.-]+/g, "")) : 0;
+  const numericGoal = goal ? Number(goal.replace(/[^0-9.-]+/g, "")) : 1;
+  const progress = (numericValue / numericGoal) * 100;
 
   return (
     <Collapsible

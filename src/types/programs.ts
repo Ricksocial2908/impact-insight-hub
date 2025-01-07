@@ -2,6 +2,7 @@ export interface Metric {
   label: string;
   value: string;
   goal: string;
+  details?: string[];
 }
 
 export interface SubProgram {
