@@ -5,6 +5,7 @@ import { RegionsFilter } from "@/components/RegionsFilter";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Header } from "@/components/Header";
+import { MapPin } from "lucide-react";
 
 const Index = () => {
   const [selectedRegions, setSelectedRegions] = useState<Set<string>>(new Set());
@@ -33,6 +34,30 @@ const Index = () => {
               onRegionSelect={setSelectedRegions} 
             />
           </header>
+
+          {selectedRegions.size > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-lg shadow p-4 mb-6"
+            >
+              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                Selected Regions
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {Array.from(selectedRegions).map((region) => (
+                  <div
+                    key={region}
+                    className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    {region}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           <DashboardMetrics selectedRegions={selectedRegions} />
           <ProgramOverview />
