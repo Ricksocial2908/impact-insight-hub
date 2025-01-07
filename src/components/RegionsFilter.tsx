@@ -203,3 +203,4 @@ export const RegionsFilter = ({ onRegionSelect, selectedRegions }: RegionsFilter
       </DropdownMenuContent>
     </DropdownMenu>
   );
+};
