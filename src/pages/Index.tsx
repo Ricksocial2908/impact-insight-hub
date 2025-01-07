@@ -1,41 +1,72 @@
-import { Card } from "@/components/ui/card";
+import { useState } from "react";
 import { DashboardMetrics } from "@/components/DashboardMetrics";
 import { ProgramOverview } from "@/components/ProgramOverview";
-import { RegionsFilter } from "@/components/RegionsFilter";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { RegionsSidebar } from "@/components/RegionsSidebar";
+
+export type SelectedRegions = {
+  [key: string]: {
+    [key: string]: boolean;
+  };
+};
 
 const Index = () => {
-  const [selectedRegions, setSelectedRegions] = useState<Set<string>>(new Set());
+  // Initialize all regions as selected
+  const [selectedRegions, setSelectedRegions] = useState<SelectedRegions>({
+    AMER: {
+      existing: true,
+      ml: true,
+      expansion: true,
+      prospective: true,
+    },
+    EMEA: {
+      existing: true,
+      ml: true,
+      expansion: true,
+      prospective: true,
+    },
+    APJC: {
+      existing: true,
+      ml: true,
+      expansion: true,
+      prospective: true,
+    },
+  });
+
+  const handleRegionToggle = (region: string, type: string, value: boolean) => {
+    setSelectedRegions((prev) => ({
+      ...prev,
+      [region]: {
+        ...prev[region],
+        [type]: value,
+      },
+    }));
+  };
+
+  // Convert selected regions to Set for metrics calculation
+  const getSelectedRegionsSet = () => {
+    const selectedSet = new Set<string>();
+    Object.entries(selectedRegions).forEach(([region, types]) => {
+      Object.entries(types).forEach(([type, isSelected]) => {
+        if (isSelected) {
+          selectedSet.add(`${region}-${type}`);
+        }
+      });
+    });
+    return selectedSet;
+  };
 
   return (
-    <div className="flex min-h-screen w-full">
-      <div className="flex-1 bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-7xl mx-auto space-y-8"
-        >
-          <header className="flex flex-col md:flex-row justify-between items-center mb-12">
-            <div className="text-center md:text-left mb-4 md:mb-0">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
-                Program Impact Dashboard
-              </h1>
-              <p className="text-gray-600">
-                Tracking our community initiatives and their impact
-              </p>
-            </div>
-            <RegionsFilter 
-              selectedRegions={selectedRegions} 
-              onRegionSelect={setSelectedRegions} 
-            />
-          </header>
-
-          <DashboardMetrics selectedRegions={selectedRegions} />
-          <ProgramOverview />
-        </motion.div>
-      </div>
+    <div className="flex min-h-screen">
+      <RegionsSidebar
+        selectedRegions={selectedRegions}
+        onRegionToggle={handleRegionToggle}
+      />
+      <main className="flex-1 p-8">
+        <DashboardMetrics selectedRegions={getSelectedRegionsSet()} />
+        <div className="mt-8">
+          <ProgramOverview selectedRegions={getSelectedRegionsSet()} />
+        </div>
+      </main>
     </div>
   );
 };
