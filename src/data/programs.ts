@@ -153,26 +153,123 @@ export const programs: Program[] = [
       {
         name: "Social Media",
         metrics: [
-          { label: "Partner posts", value: "450", goal: "500" },
-          { label: "AWS volunteer posts", value: "320", goal: "400" },
-          { label: "Beneficiary posts", value: "280", goal: "300" },
-          { label: "LinkedIn posts", value: "180", goal: "200" },
+          { 
+            label: "Partner posts", 
+            value: "450", 
+            goal: "500",
+            details: [
+              "Facebook: 150 posts",
+              "Twitter/X: 120 posts",
+              "Instagram: 100 posts",
+              "TikTok: 80 posts"
+            ]
+          },
+          { 
+            label: "AWS volunteer posts", 
+            value: "320", 
+            goal: "400",
+            details: [
+              "Employee stories: 150 posts",
+              "Project updates: 100 posts",
+              "Team celebrations: 70 posts"
+            ]
+          },
+          { 
+            label: "Beneficiary posts", 
+            value: "280", 
+            goal: "300",
+            details: [
+              "Success stories: 120 posts",
+              "Project testimonials: 90 posts",
+              "Community impact: 70 posts"
+            ]
+          },
+          { 
+            label: "LinkedIn posts", 
+            value: "180", 
+            goal: "200",
+            details: [
+              "Project announcements: 60 posts",
+              "Impact stories: 70 posts",
+              "Partnership updates: 50 posts"
+            ]
+          },
         ],
       },
       {
         name: "Print Media",
         metrics: [
-          { label: "Print ads", value: "45", goal: "50" },
-          { label: "Local media coverage", value: "65", goal: "75" },
-          { label: "Paid articles", value: "28", goal: "30" },
-          { label: "Earned articles", value: "92", goal: "100" },
+          { 
+            label: "Print ads", 
+            value: "45", 
+            goal: "50",
+            details: [
+              "The Daily Herald: 15 ads",
+              "Metro News: 12 ads",
+              "Community Gazette: 10 ads",
+              "Local Times: 8 ads"
+            ]
+          },
+          { 
+            label: "Local media coverage", 
+            value: "65", 
+            goal: "75",
+            details: [
+              "City Chronicle: 20 articles",
+              "Regional Post: 18 articles",
+              "Community News Network: 15 articles",
+              "Local Tribune: 12 articles"
+            ]
+          },
+          { 
+            label: "Paid articles", 
+            value: "28", 
+            goal: "30",
+            details: [
+              "Business Weekly: 8 articles",
+              "Tech Today: 7 articles",
+              "Innovation Magazine: 7 articles",
+              "Digital Times: 6 articles"
+            ]
+          },
+          { 
+            label: "Earned articles", 
+            value: "92", 
+            goal: "100",
+            details: [
+              "Industry publications: 30 articles",
+              "Local newspapers: 25 articles",
+              "Online news portals: 20 articles",
+              "Community magazines: 17 articles"
+            ]
+          },
         ],
       },
       {
         name: "Surveys",
         metrics: [
-          { label: "Partner surveys", value: "150", goal: "175" },
-          { label: "Stakeholder surveys", value: "85", goal: "100" },
+          { 
+            label: "Partner surveys", 
+            value: "150", 
+            goal: "175",
+            details: [
+              "NGO feedback: 50 surveys",
+              "Corporate partners: 40 surveys",
+              "Educational institutions: 35 surveys",
+              "Government agencies: 25 surveys"
+            ]
+          },
+          { 
+            label: "Stakeholder surveys", 
+            value: "85", 
+            goal: "100",
+            details: [
+              "Community members: 30 surveys",
+              "Program beneficiaries: 25 surveys",
+              "Local businesses: 20 surveys",
+              "Project volunteers: 10 surveys"
+            ]
+          },
         ],
       },
     ],
