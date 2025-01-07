@@ -1,6 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
+interface ProgramOverviewProps {
+  selectedRegions?: Set<string>;
+}
+
 const programs = [
   {
     name: "STEAM",
@@ -180,7 +184,7 @@ const programs = [
   },
 ];
 
-export const ProgramOverview = () => {
+export const ProgramOverview = ({ selectedRegions }: ProgramOverviewProps) => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold text-gray-900">Program Overview</h2>

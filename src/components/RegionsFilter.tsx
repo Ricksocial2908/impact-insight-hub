@@ -10,16 +10,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { Region, RegionGroup } from "../types/regions";
 
-type Region = {
-  name: string;
-  code: string;
-};
-
-type RegionGroup = {
-  name: string;
-  regions: Region[];
-};
+interface RegionsFilterProps {
+  onRegionSelect: (regions: Set<string>) => void;
+  selectedRegions: Set<string>;
+}
 
 const regionGroups: RegionGroup[] = [
   {
@@ -87,8 +83,7 @@ const regionGroups: RegionGroup[] = [
   },
 ];
 
-export const RegionsFilter = () => {
-  const [selectedRegions, setSelectedRegions] = useState<Set<string>>(new Set());
+export const RegionsFilter = ({ onRegionSelect, selectedRegions }: RegionsFilterProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleRegionToggle = (code: string, groupName: string) => {
@@ -108,18 +103,18 @@ export const RegionsFilter = () => {
         group.regions.forEach((region) => newSelected.add(region.code));
       }
     }
-    setSelectedRegions(newSelected);
+    onRegionSelect(newSelected);
   };
 
   const handleSelectAll = () => {
     const allRegions = new Set(
       regionGroups.flatMap((group) => group.regions.map((r) => r.code))
     );
-    setSelectedRegions(allRegions);
+    onRegionSelect(allRegions);
   };
 
   const handleDeselectAll = () => {
-    setSelectedRegions(new Set());
+    onRegionSelect(new Set());
   };
 
   const isGroupSelected = (groupName: string) => {
@@ -208,4 +203,3 @@ export const RegionsFilter = () => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};

@@ -26,11 +26,14 @@ const Index = () => {
                 Tracking our community initiatives and their impact
               </p>
             </div>
-            <RegionsFilter onRegionSelect={setSelectedRegions} selectedRegions={selectedRegions} />
+            <RegionsFilter 
+              selectedRegions={selectedRegions} 
+              onRegionSelect={setSelectedRegions} 
+            />
           </header>
 
           <DashboardMetrics selectedRegions={selectedRegions} />
-          <ProgramOverview selectedRegions={selectedRegions} />
+          <ProgramOverview />
         </motion.div>
       </div>
     </div>
