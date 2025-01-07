@@ -1,14 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { SubProgram } from "@/types/programs";
+import { Program } from "@/types/programs";
 import { adjustValueForTimePeriod } from "@/utils/timeAdjustments";
+import { SubProgramSection } from "./SubProgramSection";
 
 interface ProgramCardProps {
-  program: {
-    name: string;
-    ytdInvestment: string;
-    subPrograms: SubProgram[];
-  };
+  program: Program;
   index: number;
   timePeriod: 'month' | 'quarter' | 'year';
 }
@@ -28,27 +25,13 @@ export const ProgramCard = ({ program, index, timePeriod }: ProgramCardProps) =>
               Investment: {adjustValueForTimePeriod(program.ytdInvestment, timePeriod)}
             </p>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {program.subPrograms.map((subProgram) => (
-              <div key={subProgram.name} className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-700">{subProgram.name}</h4>
-                <div className="space-y-1">
-                  {subProgram.metrics.map((metric) => (
-                    <div key={metric.label} className="flex justify-between items-center text-sm">
-                      <span className="text-gray-500">{metric.label}</span>
-                      <div className="flex gap-2">
-                        <span className="text-gray-900">
-                          {adjustValueForTimePeriod(metric.value, timePeriod)}
-                        </span>
-                        <span className="text-gray-400">|</span>
-                        <span className="text-gray-500">
-                          Goal: {adjustValueForTimePeriod(metric.goal, timePeriod)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <SubProgramSection
+                key={subProgram.name}
+                subProgram={subProgram}
+                timePeriod={timePeriod}
+              />
             ))}
           </div>
         </div>
