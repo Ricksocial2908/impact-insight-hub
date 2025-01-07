@@ -1,17 +1,7 @@
 import { Region } from '../types/regions';
+import { getTimeMultiplier } from './timeAdjustments';
 
 type TimePeriod = 'month' | 'quarter' | 'year';
-
-const getTimeMultiplier = (timePeriod: TimePeriod) => {
-  switch (timePeriod) {
-    case 'month':
-      return 1/12;
-    case 'quarter':
-      return 1/4;
-    default:
-      return 1;
-  }
-};
 
 export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePeriod: TimePeriod = 'year') => {
   const timeMultiplier = getTimeMultiplier(timePeriod);
@@ -109,7 +99,7 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePerio
     .filter(([_, count]) => count > 0)
     .map(([region, count]) => {
       const base = baseMetrics[region as keyof typeof baseMetrics];
-      const ratio = (count / 10) * timeMultiplier; // Assuming average 10 regions per main region
+      const ratio = count / 10; // Assuming average 10 regions per main region
 
       return {
         region,

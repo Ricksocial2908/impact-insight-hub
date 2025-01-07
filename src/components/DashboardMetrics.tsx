@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { calculateRegionalMetrics } from "../utils/regionData";
+import { adjustValueForTimePeriod, getTimeMultiplier } from "../utils/timeAdjustments";
 import {
   Select,
   SelectContent,
@@ -20,36 +21,37 @@ type TimePeriod = 'month' | 'quarter' | 'year';
 export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('year');
   const regionalData = calculateRegionalMetrics(selectedRegions, timePeriod);
+  const timeMultiplier = getTimeMultiplier(timePeriod);
 
   // Aggregate metrics across selected regions
   const aggregatedMetrics = {
-    totalInvestment: regionalData.reduce((sum, region) => sum + region.metrics.totalInvestment, 0),
-    beneficiaries: regionalData.reduce((sum, region) => sum + region.metrics.beneficiaries, 0),
-    volunteerHours: regionalData.reduce((sum, region) => sum + region.metrics.volunteerHours, 0),
-    projects: regionalData.reduce((sum, region) => sum + region.metrics.projects, 0),
+    totalInvestment: regionalData.reduce((sum, region) => sum + region.metrics.totalInvestment, 0) * timeMultiplier,
+    beneficiaries: Math.round(regionalData.reduce((sum, region) => sum + region.metrics.beneficiaries, 0) * timeMultiplier),
+    volunteerHours: Math.round(regionalData.reduce((sum, region) => sum + region.metrics.volunteerHours, 0) * timeMultiplier),
+    projects: Math.round(regionalData.reduce((sum, region) => sum + region.metrics.projects, 0) * timeMultiplier),
   };
 
-  // Aggregate program distribution
+  // Adjust program distribution data
   const programDistribution = regionalData.reduce((acc, region) => {
     region.programDistribution.forEach(prog => {
       const existing = acc.find(p => p.name === prog.name);
       if (existing) {
-        existing.value += prog.value;
+        existing.value += prog.value * timeMultiplier;
       } else {
-        acc.push({ ...prog });
+        acc.push({ ...prog, value: prog.value * timeMultiplier });
       }
     });
     return acc;
   }, [] as { name: string; value: number }[]);
 
-  // Aggregate impact metrics
+  // Adjust impact metrics data
   const impactMetrics = regionalData.reduce((acc, region) => {
     region.impactMetrics.forEach(metric => {
       const existing = acc.find(m => m.name === metric.name);
       if (existing) {
-        existing.value += metric.value;
+        existing.value += metric.value * timeMultiplier;
       } else {
-        acc.push({ ...metric });
+        acc.push({ ...metric, value: metric.value * timeMultiplier });
       }
     });
     return acc;

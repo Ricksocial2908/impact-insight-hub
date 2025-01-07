@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { SubProgram } from "@/types/programs";
+import { adjustValueForTimePeriod } from "@/utils/timeAdjustments";
 
 interface ProgramCardProps {
   program: {
@@ -13,21 +14,6 @@ interface ProgramCardProps {
 }
 
 export const ProgramCard = ({ program, index, timePeriod }: ProgramCardProps) => {
-  const getAdjustedValue = (value: string) => {
-    if (value.includes('$')) {
-      const numValue = parseFloat(value.replace(/[$,M]/g, ''));
-      const adjustedValue = timePeriod === 'month' ? 
-        numValue / 12 : timePeriod === 'quarter' ? 
-        numValue / 4 : numValue;
-      return `$${adjustedValue.toFixed(1)}M`;
-    }
-    const numValue = parseInt(value.replace(/,/g, ''));
-    const adjustedValue = timePeriod === 'month' ? 
-      Math.round(numValue / 12) : timePeriod === 'quarter' ? 
-      Math.round(numValue / 4) : numValue;
-    return adjustedValue.toLocaleString();
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -39,7 +25,7 @@ export const ProgramCard = ({ program, index, timePeriod }: ProgramCardProps) =>
           <div className="border-b pb-2">
             <h3 className="text-lg font-medium text-gray-900">{program.name}</h3>
             <p className="text-sm text-gray-500">
-              YTD Investment: {getAdjustedValue(program.ytdInvestment)}
+              Investment: {adjustValueForTimePeriod(program.ytdInvestment, timePeriod)}
             </p>
           </div>
           <div className="space-y-4">
@@ -52,11 +38,11 @@ export const ProgramCard = ({ program, index, timePeriod }: ProgramCardProps) =>
                       <span className="text-gray-500">{metric.label}</span>
                       <div className="flex gap-2">
                         <span className="text-gray-900">
-                          {getAdjustedValue(metric.value)}
+                          {adjustValueForTimePeriod(metric.value, timePeriod)}
                         </span>
                         <span className="text-gray-400">|</span>
                         <span className="text-gray-500">
-                          Goal: {getAdjustedValue(metric.goal)}
+                          Goal: {adjustValueForTimePeriod(metric.goal, timePeriod)}
                         </span>
                       </div>
                     </div>
