@@ -88,21 +88,29 @@ export const RegionsFilter = ({ onRegionSelect, selectedRegions }: RegionsFilter
 
   const handleRegionToggle = (code: string, groupName: string) => {
     const newSelected = new Set(selectedRegions);
-    if (newSelected.has(code)) {
-      newSelected.delete(code);
-      // If this was a main region, remove all its subregions
-      const group = regionGroups.find((g) => g.name === groupName);
-      if (group) {
-        group.regions.forEach((region) => newSelected.delete(region.code));
-      }
+    
+    // If toggling a group
+    const group = regionGroups.find((g) => g.name === groupName);
+    if (code === groupName && group) {
+      const isGroupSelected = isGroupFullySelected(groupName);
+      
+      // Toggle all regions in the group
+      group.regions.forEach((region) => {
+        if (isGroupSelected) {
+          newSelected.delete(region.code);
+        } else {
+          newSelected.add(region.code);
+        }
+      });
     } else {
-      newSelected.add(code);
-      // If this was a main region, add all its subregions
-      const group = regionGroups.find((g) => g.name === groupName);
-      if (group) {
-        group.regions.forEach((region) => newSelected.add(region.code));
+      // Toggle individual region
+      if (newSelected.has(code)) {
+        newSelected.delete(code);
+      } else {
+        newSelected.add(code);
       }
     }
+    
     onRegionSelect(newSelected);
   };
 
@@ -117,10 +125,17 @@ export const RegionsFilter = ({ onRegionSelect, selectedRegions }: RegionsFilter
     onRegionSelect(new Set());
   };
 
-  const isGroupSelected = (groupName: string) => {
+  const isGroupFullySelected = (groupName: string) => {
     const group = regionGroups.find((g) => g.name === groupName);
     if (!group) return false;
     return group.regions.every((region) => selectedRegions.has(region.code));
+  };
+
+  const isGroupPartiallySelected = (groupName: string) => {
+    const group = regionGroups.find((g) => g.name === groupName);
+    if (!group) return false;
+    const selectedInGroup = group.regions.some((region) => selectedRegions.has(region.code));
+    return selectedInGroup && !isGroupFullySelected(groupName);
   };
 
   const filteredRegionGroups = regionGroups.map((group) => ({
@@ -174,10 +189,11 @@ export const RegionsFilter = ({ onRegionSelect, selectedRegions }: RegionsFilter
         {filteredRegionGroups.map((group) => (
           <div key={group.name}>
             <DropdownMenuCheckboxItem
-              checked={isGroupSelected(group.name)}
+              checked={isGroupFullySelected(group.name)}
               onCheckedChange={() => handleRegionToggle(group.name, group.name)}
+              className="font-semibold"
             >
-              <div className="flex items-center font-semibold">
+              <div className="flex items-center">
                 <MapPin className="mr-2 h-4 w-4" />
                 <span>{group.name}</span>
               </div>
