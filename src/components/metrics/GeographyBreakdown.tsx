@@ -9,40 +9,33 @@ import {
   PieChart,
   Pie,
   Cell,
+  Tooltip,
 } from "recharts";
+import { calculateRegionalMetrics } from "@/utils/regionData";
 
 interface GeographyBreakdownProps {
   selectedRegions: Set<string>;
 }
 
 export const GeographyBreakdown = ({ selectedRegions }: GeographyBreakdownProps) => {
-  const geographyData = [
-    {
-      name: "AMER",
-      investments: 2500000,
-      beneficiaries: 45000,
-      volunteers: 1200,
-    },
-    {
-      name: "EMEA",
-      investments: 1800000,
-      beneficiaries: 35000,
-      volunteers: 800,
-    },
-    {
-      name: "APJC",
-      investments: 1500000,
-      beneficiaries: 25000,
-      volunteers: 600,
-    },
-  ];
+  const metrics = calculateRegionalMetrics(selectedRegions);
+  
+  const geographyData = metrics.map((region) => ({
+    name: region.region,
+    investments: region.metrics.totalInvestment,
+    beneficiaries: region.metrics.beneficiaries,
+    volunteers: region.metrics.volunteerHours,
+  }));
 
-  const beneficiariesByPillar = [
-    { name: "STEAM", value: 40, color: "#10B981" },
-    { name: "Skills Development", value: 25, color: "#6366F1" },
-    { name: "Sustainability", value: 20, color: "#FBBF24" },
-    { name: "Social Impact", value: 15, color: "#A855F7" },
-  ];
+  const beneficiariesByPillar = metrics.reduce((acc, region) => {
+    const total = region.metrics.beneficiaries;
+    return [
+      { name: "STEAM", value: Math.round(total * 0.4), color: "#10B981" },
+      { name: "Skills Development", value: Math.round(total * 0.25), color: "#6366F1" },
+      { name: "Sustainability", value: Math.round(total * 0.20), color: "#FBBF24" },
+      { name: "Social Impact", value: Math.round(total * 0.15), color: "#A855F7" },
+    ];
+  }, []);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -54,9 +47,10 @@ export const GeographyBreakdown = ({ selectedRegions }: GeographyBreakdownProps)
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <Bar dataKey="investments" fill="#10B981" />
-              <Bar dataKey="beneficiaries" fill="#6366F1" />
-              <Bar dataKey="volunteers" fill="#FBBF24" />
+              <Tooltip />
+              <Bar dataKey="investments" fill="#10B981" name="Investments ($)" />
+              <Bar dataKey="beneficiaries" fill="#6366F1" name="Beneficiaries" />
+              <Bar dataKey="volunteers" fill="#FBBF24" name="Volunteer Hours" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -67,6 +61,7 @@ export const GeographyBreakdown = ({ selectedRegions }: GeographyBreakdownProps)
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
+              <Tooltip />
               <Pie
                 data={beneficiariesByPillar}
                 cx="50%"
@@ -90,7 +85,7 @@ export const GeographyBreakdown = ({ selectedRegions }: GeographyBreakdownProps)
                   style={{ backgroundColor: entry.color }}
                 />
                 <span className="text-sm text-gray-600">
-                  {entry.name} ({entry.value}%)
+                  {entry.name} ({entry.value.toLocaleString()})
                 </span>
               </div>
             ))}
