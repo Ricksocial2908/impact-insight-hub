@@ -3,29 +3,32 @@ import { getTimeMultiplier } from './timeAdjustments';
 
 type TimePeriod = 'month' | 'quarter' | 'year';
 
-const TOTAL_REGIONS = 32; // Total number of possible regions
+const TOTAL_REGIONS = 32;
+
+// Helper function to determine region group from region code
+const getRegionGroup = (code: string): string => {
+  const amerCodes = ['IAD', 'PDX', 'CMH', 'SFO', 'PHX', 'GRU', 'QRO', 'SCL', 'YUL', 'YYC', 'ATL', 'JAN', 'SBN', 'PHL', 'MSP'];
+  const emeaCodes = ['ARN', 'BAH', 'CDG', 'CPT', 'DUB', 'DXB', 'FRA', 'LHR', 'MXP', 'TLV', 'ZAZ', 'ZRH'];
+  const apjcCodes = ['NRT', 'KIX', 'CGK', 'SIN', 'BKK', 'KUL', 'BJS', 'ZHY', 'HKG', 'TPE', 'AKL', 'MEL', 'SYD', 'ICN', 'BOM', 'HYD'];
+
+  if (amerCodes.includes(code)) return 'AMER';
+  if (emeaCodes.includes(code)) return 'EMEA';
+  if (apjcCodes.includes(code)) return 'APJC';
+  return 'Unknown';
+};
 
 export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePeriod: TimePeriod = 'year') => {
   const timeMultiplier = getTimeMultiplier(timePeriod);
   const regionMultiplier = selectedRegions.size / TOTAL_REGIONS;
-  
-  // Helper function to get the main region from a region code
-  const getMainRegion = (code: string): string => {
-    if (code.includes('AMER')) return 'AMER';
-    if (code.includes('EMEA')) return 'EMEA';
-    return 'APJC';
-  };
 
-  // Count selected regions per main region
-  const regionCounts = {
-    AMER: 0,
-    EMEA: 0,
-    APJC: 0,
-  };
-
+  // Group selected regions by their main region
+  const regionGroups = new Map<string, string[]>();
   selectedRegions.forEach(code => {
-    const mainRegion = getMainRegion(code);
-    regionCounts[mainRegion as keyof typeof regionCounts]++;
+    const group = getRegionGroup(code);
+    if (!regionGroups.has(group)) {
+      regionGroups.set(group, []);
+    }
+    regionGroups.get(group)?.push(code);
   });
 
   // Base metrics for each region (yearly totals)
@@ -98,28 +101,26 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePerio
     },
   };
 
-  return Object.entries(regionCounts)
-    .filter(([_, count]) => count > 0)
-    .map(([region, count]) => {
-      const base = baseMetrics[region as keyof typeof baseMetrics];
-      const ratio = (count / TOTAL_REGIONS) * timeMultiplier;
+  return Array.from(regionGroups.entries()).map(([region, codes]) => {
+    const base = baseMetrics[region as keyof typeof baseMetrics];
+    const ratio = (codes.length / TOTAL_REGIONS) * timeMultiplier;
 
-      return {
-        region,
-        metrics: {
-          totalInvestment: base.totalInvestment * ratio,
-          beneficiaries: Math.round(base.beneficiaries * ratio),
-          volunteerHours: Math.round(base.volunteerHours * ratio),
-          projects: Math.round(base.projects * ratio),
-        },
-        programDistribution: Object.entries(base.programDistribution).map(([name, value]) => ({
-          name,
-          value: value * ratio,
-        })),
-        impactMetrics: Object.entries(base.impactMetrics).map(([name, value]) => ({
-          name,
-          value: Math.round(value * ratio),
-        })),
-      };
-    });
+    return {
+      region,
+      metrics: {
+        totalInvestment: base.totalInvestment * ratio,
+        beneficiaries: Math.round(base.beneficiaries * ratio),
+        volunteerHours: Math.round(base.volunteerHours * ratio),
+        projects: Math.round(base.projects * ratio),
+      },
+      programDistribution: Object.entries(base.programDistribution).map(([name, value]) => ({
+        name,
+        value: value * ratio,
+      })),
+      impactMetrics: Object.entries(base.impactMetrics).map(([name, value]) => ({
+        name,
+        value: Math.round(value * ratio),
+      })),
+    };
+  });
 };
