@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { BarChart as BarChartIcon, Users, Clock, FolderGit2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { calculateRegionalMetrics } from "../utils/regionData";
 import { adjustValueForTimePeriod, getTimeMultiplier } from "../utils/timeAdjustments";
@@ -63,24 +64,28 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
       value: `$${(aggregatedMetrics.totalInvestment / 1000000).toFixed(1)}M`,
       change: "+15%",
       positive: true,
+      icon: <BarChartIcon className="w-4 h-4 text-primary" />,
     },
     {
       title: "Total Beneficiaries",
       value: aggregatedMetrics.beneficiaries.toLocaleString(),
       change: "+12%",
       positive: true,
+      icon: <Users className="w-4 h-4 text-primary" />,
     },
     {
       title: "Volunteer Hours",
       value: aggregatedMetrics.volunteerHours.toLocaleString(),
       change: "+8%",
       positive: true,
+      icon: <Clock className="w-4 h-4 text-primary" />,
     },
     {
       title: "Projects",
       value: aggregatedMetrics.projects.toString(),
       change: "+5%",
       positive: true,
+      icon: <FolderGit2 className="w-4 h-4 text-primary" />,
     },
   ];
 
@@ -111,7 +116,10 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
             transition={{ duration: 0.5, delay: index * 0.1 }}
           >
             <Card className="glass-card p-6 card-hover">
-              <h3 className="text-sm font-medium text-gray-500">{metric.title}</h3>
+              <div className="flex items-center gap-3 mb-2">
+                {metric.icon}
+                <h3 className="text-sm font-medium text-gray-500">{metric.title}</h3>
+              </div>
               <div className="mt-2 flex items-baseline">
                 <p className="text-2xl font-semibold text-gray-900">{metric.value}</p>
                 <span className={`ml-2 text-sm ${metric.positive ? 'text-green-600' : 'text-red-600'}`}>
@@ -125,7 +133,10 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="glass-card p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Program Investment Distribution</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <BarChartIcon className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-medium text-gray-900">Program Investment Distribution</h3>
+          </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={programDistribution}>
@@ -139,7 +150,10 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
         </Card>
 
         <Card className="glass-card p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Key Impact Metrics</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <BarChartIcon className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-medium text-gray-900">Key Impact Metrics</h3>
+          </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={impactMetrics} layout="vertical">
