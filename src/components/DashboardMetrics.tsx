@@ -2,13 +2,24 @@ import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { calculateRegionalMetrics } from "../utils/regionData";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 interface DashboardMetricsProps {
   selectedRegions: Set<string>;
 }
 
+type TimePeriod = 'month' | 'quarter' | 'year';
+
 export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => {
-  const regionalData = calculateRegionalMetrics(selectedRegions);
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('year');
+  const regionalData = calculateRegionalMetrics(selectedRegions, timePeriod);
 
   // Aggregate metrics across selected regions
   const aggregatedMetrics = {
@@ -73,6 +84,22 @@ export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => 
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end mb-4">
+        <Select
+          value={timePeriod}
+          onValueChange={(value: TimePeriod) => setTimePeriod(value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select time period" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="month">This Month</SelectItem>
+            <SelectItem value="quarter">This Quarter</SelectItem>
+            <SelectItem value="year">This Year</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((metric, index) => (
           <motion.div

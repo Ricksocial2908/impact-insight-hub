@@ -1,46 +1,64 @@
 import { Region } from '../types/regions';
 
-export type RegionalMetrics = {
-  region: string;
-  metrics: {
-    totalInvestment: number;
-    beneficiaries: number;
-    volunteerHours: number;
-    projects: number;
-  };
-  programDistribution: {
-    name: string;
-    value: number;
-  }[];
-  impactMetrics: {
-    name: string;
-    value: number;
-  }[];
+type TimePeriod = 'month' | 'quarter' | 'year';
+
+const getTimeMultiplier = (timePeriod: TimePeriod) => {
+  switch (timePeriod) {
+    case 'month':
+      return 1/12;
+    case 'quarter':
+      return 1/4;
+    default:
+      return 1;
+  }
 };
 
-const baseMetrics = {
-  AMER: {
-    totalInvestment: 5200000,
-    beneficiaries: 78000,
-    volunteerHours: 23000,
-    projects: 120,
-    programDistribution: {
-      STEAM: 1500000,
-      Skills: 1000000,
-      Sustainability: 1800000,
-      Hyperlocal: 900000,
+export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePeriod: TimePeriod = 'year') => {
+  const timeMultiplier = getTimeMultiplier(timePeriod);
+  
+  // Helper function to get the main region from a region code
+  const getMainRegion = (code: string): string => {
+    if (code.includes('AMER')) return 'AMER';
+    if (code.includes('EMEA')) return 'EMEA';
+    return 'APJC';
+  };
+
+  // Count selected regions per main region
+  const regionCounts = {
+    AMER: 0,
+    EMEA: 0,
+    APJC: 0,
+  };
+
+  selectedRegions.forEach(code => {
+    const mainRegion = getMainRegion(code);
+    regionCounts[mainRegion as keyof typeof regionCounts]++;
+  });
+
+  // Base metrics for each region
+  const baseMetrics = {
+    AMER: {
+      totalInvestment: 5200000,
+      beneficiaries: 78000,
+      volunteerHours: 23000,
+      projects: 120,
+      programDistribution: {
+        STEAM: 1500000,
+        Skills: 1000000,
+        Sustainability: 1800000,
+        Hyperlocal: 900000,
+      },
+      impactMetrics: {
+        "Students Reached": 8000,
+        "Employment Created": 600,
+        "Trees Planted": 8000,
+        "Water Saved (Gal)": 1500000,
+        "Communities Impacted": 120,
+        "Volunteer Events": 450,
+        "Media Coverage": 140,
+        "Partner Engagement": 80,
+      },
     },
-    impactMetrics: {
-      "Students Reached": 8000,
-      "Employment Created": 600,
-      "Trees Planted": 8000,
-      "Water Saved (Gal)": 1500000,
-      "Communities Impacted": 120,
-      "Volunteer Events": 450,
-      "Media Coverage": 140,
-      "Partner Engagement": 80,
-    },
-  },
   EMEA: {
     totalInvestment: 3100000,
     beneficiaries: 45000,
@@ -85,37 +103,15 @@ const baseMetrics = {
       "Partner Engagement": 31,
     },
   },
-};
-
-export const calculateRegionalMetrics = (selectedRegions: Set<string>): RegionalMetrics[] => {
-  const result: RegionalMetrics[] = [];
-  
-  // Helper function to get the main region (AMER, EMEA, APJC) from a region code
-  const getMainRegion = (code: string): string => {
-    if (code.includes('AMER')) return 'AMER';
-    if (code.includes('EMEA')) return 'EMEA';
-    return 'APJC';
   };
 
-  // Count selected regions per main region
-  const regionCounts = {
-    AMER: 0,
-    EMEA: 0,
-    APJC: 0,
-  };
-
-  selectedRegions.forEach(code => {
-    const mainRegion = getMainRegion(code);
-    regionCounts[mainRegion as keyof typeof regionCounts]++;
-  });
-
-  // Calculate metrics based on selected regions
-  Object.entries(regionCounts).forEach(([region, count]) => {
-    if (count > 0) {
+  return Object.entries(regionCounts)
+    .filter(([_, count]) => count > 0)
+    .map(([region, count]) => {
       const base = baseMetrics[region as keyof typeof baseMetrics];
-      const ratio = count / 10; // Assuming average 10 regions per main region
+      const ratio = (count / 10) * timeMultiplier; // Assuming average 10 regions per main region
 
-      result.push({
+      return {
         region,
         metrics: {
           totalInvestment: base.totalInvestment * ratio,
@@ -131,9 +127,6 @@ export const calculateRegionalMetrics = (selectedRegions: Set<string>): Regional
           name,
           value: Math.round(value * ratio),
         })),
-      });
-    }
-  });
-
-  return result;
+      };
+    });
 };
