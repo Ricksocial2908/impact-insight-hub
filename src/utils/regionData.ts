@@ -6,35 +6,6 @@ type TimePeriod = 'month' | 'quarter' | 'year';
 export const calculateRegionalMetrics = (selectedRegions: Set<string>, timePeriod: TimePeriod = 'year') => {
   const timeMultiplier = getTimeMultiplier(timePeriod);
   
-  // If no regions are selected, return empty metrics
-  if (selectedRegions.size === 0) {
-    return [{
-      region: 'NONE',
-      metrics: {
-        totalInvestment: 0,
-        beneficiaries: 0,
-        volunteerHours: 0,
-        projects: 0,
-      },
-      programDistribution: [
-        { name: 'STEAM', value: 0 },
-        { name: 'Skills', value: 0 },
-        { name: 'Sustainability', value: 0 },
-        { name: 'Hyperlocal', value: 0 },
-      ],
-      impactMetrics: [
-        { name: 'Students Reached', value: 0 },
-        { name: 'Employment Created', value: 0 },
-        { name: 'Trees Planted', value: 0 },
-        { name: 'Water Saved (Gal)', value: 0 },
-        { name: 'Communities Impacted', value: 0 },
-        { name: 'Volunteer Events', value: 0 },
-        { name: 'Media Coverage', value: 0 },
-        { name: 'Partner Engagement', value: 0 },
-      ],
-    }];
-  }
-
   // Helper function to get the main region from a region code
   const getMainRegion = (code: string): string => {
     if (code.includes('AMER')) return 'AMER';
