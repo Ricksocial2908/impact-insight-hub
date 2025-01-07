@@ -5,13 +5,15 @@ import { motion } from "framer-motion";
 import { MetricsOverview } from "@/components/metrics/MetricsOverview";
 import { PerformanceMetrics } from "@/components/metrics/PerformanceMetrics";
 import { GeographyBreakdown } from "@/components/metrics/GeographyBreakdown";
+import { Header } from "@/components/Header";
 
 const Metrics = () => {
   const [selectedRegions, setSelectedRegions] = useState<Set<string>>(new Set());
 
   return (
-    <div className="flex min-h-screen w-full">
-      <div className="flex-1 bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-8">
+    <div className="min-h-screen w-full bg-gradient-to-b from-gray-50 to-gray-100">
+      <Header />
+      <div className="p-6 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
