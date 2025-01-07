@@ -4,7 +4,7 @@ import { Program } from "@/types/programs";
 import { adjustValueForTimePeriod } from "@/utils/timeAdjustments";
 import { SubProgramSection } from "./SubProgramSection";
 import { 
-  Flask, 
+  Beaker, 
   GraduationCap, 
   Leaf, 
   HeartHandshake, 
@@ -21,7 +21,7 @@ interface ProgramCardProps {
 const getProgramIcon = (programName: string) => {
   switch (programName) {
     case "STEAM":
-      return <Flask className="w-6 h-6 text-blue-600" />;
+      return <Beaker className="w-6 h-6 text-blue-600" />;
     case "Local Skills Development":
       return <GraduationCap className="w-6 h-6 text-cyan-600" />;
     case "Sustainability":
