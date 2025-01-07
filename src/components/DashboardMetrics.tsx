@@ -4,8 +4,14 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 
 const metrics = [
   {
-    title: "Total Students",
-    value: "15,234",
+    title: "Total Investment",
+    value: "$10.1M",
+    change: "+15%",
+    positive: true,
+  },
+  {
+    title: "Total Beneficiaries",
+    value: "156,789",
     change: "+12%",
     positive: true,
   },
@@ -16,12 +22,6 @@ const metrics = [
     positive: true,
   },
   {
-    title: "Community Impact",
-    value: "$2.3M",
-    change: "+15%",
-    positive: true,
-  },
-  {
     title: "Projects",
     value: "234",
     change: "+5%",
@@ -29,25 +29,24 @@ const metrics = [
   },
 ];
 
-const socialMetrics = [
-  { name: "Partner Posts", value: 450 },
-  { name: "AWS Volunteer Posts", value: 320 },
-  { name: "Beneficiary Posts", value: 280 },
-  { name: "LinkedIn Posts", value: 180 },
-  { name: "Print Ads", value: 45 },
-  { name: "Local Media", value: 65 },
-  { name: "Paid Articles", value: 28 },
-  { name: "Earned Articles", value: 92 },
-  { name: "Partner Surveys", value: 150 },
-  { name: "Stakeholder Surveys", value: 85 },
+const programDistribution = [
+  { name: "STEAM", value: 2500000 },
+  { name: "Skills", value: 1800000 },
+  { name: "Sustainability", value: 3200000 },
+  { name: "Hyperlocal", value: 1500000 },
+  { name: "Volunteering", value: 500000 },
+  { name: "Social Impact", value: 300000 },
 ];
 
-const chartData = [
-  { name: "STEAM", value: 4000 },
-  { name: "Skills", value: 3000 },
-  { name: "Sustainability", value: 2000 },
-  { name: "Hyperlocal", value: 2780 },
-  { name: "Volunteering", value: 1890 },
+const impactMetrics = [
+  { name: "Students Reached", value: 12345 },
+  { name: "Employment Created", value: 1023 },
+  { name: "Trees Planted", value: 12345 },
+  { name: "Water Saved (Gal)", value: 2300000 },
+  { name: "Communities Impacted", value: 234 },
+  { name: "Volunteer Events", value: 890 },
+  { name: "Media Coverage", value: 230 },
+  { name: "Partner Engagement", value: 156 },
 ];
 
 export const DashboardMetrics = () => {
@@ -75,10 +74,10 @@ export const DashboardMetrics = () => {
       </div>
 
       <Card className="glass-card p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Program Distribution</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Program Investment Distribution</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
+            <BarChart data={programDistribution}>
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
@@ -89,10 +88,10 @@ export const DashboardMetrics = () => {
       </Card>
 
       <Card className="glass-card p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Sentiment & Social Impact Metrics</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Key Impact Metrics</h3>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={socialMetrics} layout="vertical">
+            <BarChart data={impactMetrics} layout="vertical">
               <XAxis type="number" />
               <YAxis dataKey="name" type="category" width={150} />
               <Tooltip />
