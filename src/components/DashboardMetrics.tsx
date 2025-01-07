@@ -1,55 +1,76 @@
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { calculateRegionalMetrics } from "../utils/regionData";
 
-const metrics = [
-  {
-    title: "Total Investment",
-    value: "$10.1M",
-    change: "+15%",
-    positive: true,
-  },
-  {
-    title: "Total Beneficiaries",
-    value: "156,789",
-    change: "+12%",
-    positive: true,
-  },
-  {
-    title: "Volunteer Hours",
-    value: "45,678",
-    change: "+8%",
-    positive: true,
-  },
-  {
-    title: "Projects",
-    value: "234",
-    change: "+5%",
-    positive: true,
-  },
-];
+interface DashboardMetricsProps {
+  selectedRegions: Set<string>;
+}
 
-const programDistribution = [
-  { name: "STEAM", value: 2500000 },
-  { name: "Skills", value: 1800000 },
-  { name: "Sustainability", value: 3200000 },
-  { name: "Hyperlocal", value: 1500000 },
-  { name: "Volunteering", value: 500000 },
-  { name: "Social Impact", value: 300000 },
-];
+export const DashboardMetrics = ({ selectedRegions }: DashboardMetricsProps) => {
+  const regionalData = calculateRegionalMetrics(selectedRegions);
 
-const impactMetrics = [
-  { name: "Students Reached", value: 12345 },
-  { name: "Employment Created", value: 1023 },
-  { name: "Trees Planted", value: 12345 },
-  { name: "Water Saved (Gal)", value: 2300000 },
-  { name: "Communities Impacted", value: 234 },
-  { name: "Volunteer Events", value: 890 },
-  { name: "Media Coverage", value: 230 },
-  { name: "Partner Engagement", value: 156 },
-];
+  // Aggregate metrics across selected regions
+  const aggregatedMetrics = {
+    totalInvestment: regionalData.reduce((sum, region) => sum + region.metrics.totalInvestment, 0),
+    beneficiaries: regionalData.reduce((sum, region) => sum + region.metrics.beneficiaries, 0),
+    volunteerHours: regionalData.reduce((sum, region) => sum + region.metrics.volunteerHours, 0),
+    projects: regionalData.reduce((sum, region) => sum + region.metrics.projects, 0),
+  };
 
-export const DashboardMetrics = () => {
+  // Aggregate program distribution
+  const programDistribution = regionalData.reduce((acc, region) => {
+    region.programDistribution.forEach(prog => {
+      const existing = acc.find(p => p.name === prog.name);
+      if (existing) {
+        existing.value += prog.value;
+      } else {
+        acc.push({ ...prog });
+      }
+    });
+    return acc;
+  }, [] as { name: string; value: number }[]);
+
+  // Aggregate impact metrics
+  const impactMetrics = regionalData.reduce((acc, region) => {
+    region.impactMetrics.forEach(metric => {
+      const existing = acc.find(m => m.name === metric.name);
+      if (existing) {
+        existing.value += metric.value;
+      } else {
+        acc.push({ ...metric });
+      }
+    });
+    return acc;
+  }, [] as { name: string; value: number }[]);
+
+  const metrics = [
+    {
+      title: "Total Investment",
+      value: `$${(aggregatedMetrics.totalInvestment / 1000000).toFixed(1)}M`,
+      change: "+15%",
+      positive: true,
+    },
+    {
+      title: "Total Beneficiaries",
+      value: aggregatedMetrics.beneficiaries.toLocaleString(),
+      change: "+12%",
+      positive: true,
+    },
+    {
+      title: "Volunteer Hours",
+      value: aggregatedMetrics.volunteerHours.toLocaleString(),
+      change: "+8%",
+      positive: true,
+    },
+    {
+      title: "Projects",
+      value: aggregatedMetrics.projects.toString(),
+      change: "+5%",
+      positive: true,
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

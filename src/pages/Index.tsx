@@ -3,8 +3,11 @@ import { DashboardMetrics } from "@/components/DashboardMetrics";
 import { ProgramOverview } from "@/components/ProgramOverview";
 import { RegionsFilter } from "@/components/RegionsFilter";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 const Index = () => {
+  const [selectedRegions, setSelectedRegions] = useState<Set<string>>(new Set());
+
   return (
     <div className="flex min-h-screen w-full">
       <div className="flex-1 bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-8">
@@ -23,11 +26,11 @@ const Index = () => {
                 Tracking our community initiatives and their impact
               </p>
             </div>
-            <RegionsFilter />
+            <RegionsFilter onRegionSelect={setSelectedRegions} selectedRegions={selectedRegions} />
           </header>
 
-          <DashboardMetrics />
-          <ProgramOverview />
+          <DashboardMetrics selectedRegions={selectedRegions} />
+          <ProgramOverview selectedRegions={selectedRegions} />
         </motion.div>
       </div>
     </div>
